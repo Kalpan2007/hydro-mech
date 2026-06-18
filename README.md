@@ -116,13 +116,6 @@ npm start
 
 ---
 
-## AI Tools Used
-
-- **Claude (Anthropic)** — Code generation, component architecture, design system planning
-- **v0.dev** — UI pattern reference and component structure inspiration
-
----
-
 ## Design Inspiration
 
 The design follows a **Steelix-style corporate aesthetic**:
