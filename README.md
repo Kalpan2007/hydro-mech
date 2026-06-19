@@ -119,29 +119,6 @@ hydro-mech-homepage/
 
 ---
 
-## Technical Highlights
-
-### Two-State Morphing Navbar
-The navbar transitions between two distinct visual states using a 600ms spring-eased animation (`cubic-bezier(0.22, 1, 0.36, 1)`):
-- **Hero state**: Full-width, transparent background, integrated into the hero section
-- **Scrolled state**: Floating glass pill with backdrop blur, rounded corners, and subtle shadow
-
-Active section detection uses `IntersectionObserver` with carefully tuned root margins (`-40% 0px -55% 0px`) to highlight the correct nav link as the user scrolls.
-
-### CSS-Native Tailwind v4 Configuration
-Instead of the traditional `tailwind.config.ts`, this project uses Tailwind CSS v4's native CSS configuration via `@theme inline` in `globals.css`. Design tokens (colors, fonts) are defined as CSS custom properties and consumed through Tailwind utility classes — reducing configuration overhead and improving type safety.
-
-### Animated Tabbed Product Showcase
-The Products component uses Framer Motion's `AnimatePresence` with `mode="wait"` to animate between product tabs. Content fades and slides vertically on each tab switch, creating a polished, app-like browsing experience without page navigation.
-
-### Clip-Path Section Transitions
-Diagonal section boundaries are achieved via CSS `clip-path: polygon()` — used on the hero's bottom cut, CTA banner's top/bottom edges, and the about section's warm surface background. This eliminates the need for SVG dividers or decorative images.
-
-### Scroll-Triggered Stagger Animations
-All content sections use Framer Motion's `whileInView` with `viewport={{ once: true }}` for performant scroll-triggered animations. Children elements are staggered with 80-100ms delays for a cascading entrance effect.
-
----
-
 ## Responsive Design
 
 | Breakpoint | Width | Behavior |
