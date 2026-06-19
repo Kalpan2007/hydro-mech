@@ -6,10 +6,9 @@ import { Menu, X, ChevronRight, Phone, ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 
 const navLinks = [
-  { name: "Company", href: "#about" },
-  { name: "Machines", href: "#products" },
-  { name: "Capabilities", href: "#features" },
-  { name: "Industries", href: "#products" },
+  { name: "About Us", href: "#about" },
+  { name: "Products", href: "#products" },
+  { name: "Why Choose Us", href: "#features" },
   { name: "Contact", href: "#contact" },
 ];
 
@@ -68,7 +67,7 @@ export default function Navbar() {
             scrolled ? "max-w-[1280px] h-[54px] px-0" : "max-w-[1400px] h-[76px] px-6 sm:px-10 lg:px-14"
           }`}>
             {/* ─── LOGO ─── */}
-            <a href="#" onClick={(e) => handleNavClick(e, "#")} className="relative flex items-center gap-3.5 group shrink-0">
+            <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); setMobileOpen(false); }} className="relative flex items-center gap-3.5 group shrink-0">
               {/* Logo mark — prominent on hero */}
               <div className={`relative shrink-0 transition-all duration-[600ms] ${scrolled ? "h-[30px] w-[100px] sm:w-[115px] lg:w-[125px]" : "h-[46px] w-[150px] sm:w-[175px] lg:w-[195px]"}`}>
                 <Image
