@@ -179,16 +179,3 @@ The site will be available at `http://localhost:3000`.
 | `npm run lint` | Run ESLint |
 
 ---
-
-## Walkthrough Video
-
-> Record a 60-90 second screen recording demonstrating:
-> - Hero section with animated stat counters
-> - Navbar scroll transition (transparent → glass pill)
-> - Product tab switching with content transitions
-> - Mobile responsive navigation
-> - Contact form interaction
->
-> **[Link to walkthrough video](#)**
-
----
