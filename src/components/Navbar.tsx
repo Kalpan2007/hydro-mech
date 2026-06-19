@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ChevronRight, Phone, ArrowUpRight } from "lucide-react";
 import Image from "next/image";
@@ -15,11 +15,51 @@ const navLinks = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
+  const activeRef = useRef("");
+
+  const setActive = (id: string) => {
+    activeRef.current = id;
+    setActiveSection(id);
+  };
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 80);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 80);
+      const aboutEl = document.getElementById("about");
+      if (aboutEl) {
+        const aboutTop = aboutEl.getBoundingClientRect().top;
+        if (aboutTop > window.innerHeight * 0.5) {
+          setActive("");
+        }
+      }
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const sectionIds = navLinks.map((l) => l.href.slice(1));
+    const observers: IntersectionObserver[] = [];
+
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setActive(id);
+          }
+        },
+        { rootMargin: "-40% 0px -55% 0px", threshold: 0 }
+      );
+
+      observer.observe(el);
+      observers.push(observer);
+    });
+
+    return () => observers.forEach((o) => o.disconnect());
   }, []);
 
   useEffect(() => {
@@ -86,24 +126,31 @@ export default function Navbar() {
 
             {/* ─── NAV LINKS ─── */}
             <nav className="hidden lg:flex items-center">
-              {navLinks.map((link, i) => (
-                <a
-                  key={link.name}
-                  href={link.href}
-                  onClick={(e) => handleNavClick(e, link.href)}
-                  className={`relative transition-all duration-[600ms] group ${
-                    scrolled
-                      ? "px-3 py-1.5 text-[12px] first:pl-0"
-                      : "px-5 py-2 text-[13.5px] first:pl-0"
-                  } font-medium tracking-[0.01em] text-white/60 hover:text-white`}
-                >
-                  {link.name}
-                  {/* Orange dot indicator on hover */}
-                  <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 rounded-full bg-orange transition-all duration-300 ease-out ${
-                    scrolled ? "w-0 h-[1.5px] group-hover:w-4" : "w-0 h-[2px] group-hover:w-5"
-                  }`} />
-                </a>
-              ))}
+              {navLinks.map((link) => {
+                const isActive = activeSection === link.href.slice(1);
+                return (
+                  <a
+                    key={link.name}
+                    href={link.href}
+                    onClick={(e) => handleNavClick(e, link.href)}
+                    className={`relative transition-all duration-[600ms] group ${
+                      scrolled
+                        ? "px-3 py-1.5 text-[12px] first:pl-0"
+                        : "px-5 py-2 text-[13.5px] first:pl-0"
+                    } font-medium tracking-[0.01em] ${
+                      isActive ? "text-orange" : "text-white/60 hover:text-white"
+                    }`}
+                  >
+                    {link.name}
+                    {/* Orange underline — always visible when active, hover otherwise */}
+                    <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 rounded-full bg-orange transition-all duration-300 ease-out ${
+                      isActive
+                        ? scrolled ? "w-4 h-[1.5px]" : "w-5 h-[2px]"
+                        : scrolled ? "w-0 h-[1.5px] group-hover:w-4" : "w-0 h-[2px] group-hover:w-5"
+                    }`} />
+                  </a>
+                );
+              })}
             </nav>
 
             {/* ─── RIGHT ACTIONS ─── */}
@@ -186,20 +233,27 @@ export default function Navbar() {
                 </button>
               </div>
               <nav className="px-3 py-4">
-                {navLinks.map((link, i) => (
-                  <motion.a
-                    key={link.name}
-                    href={link.href}
-                    onClick={(e) => handleNavClick(e, link.href)}
-                    initial={{ opacity: 0, x: 16 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.04 + i * 0.035 }}
-                    className="flex items-center justify-between px-4 py-3 text-[14px] font-medium text-white/65 hover:text-white hover:bg-white/[0.04] rounded-lg transition-all duration-200"
-                  >
-                    {link.name}
-                    <ArrowUpRight className="w-3.5 h-3.5 text-white/15" />
-                  </motion.a>
-                ))}
+                {navLinks.map((link, i) => {
+                  const isActive = activeSection === link.href.slice(1);
+                  return (
+                    <motion.a
+                      key={link.name}
+                      href={link.href}
+                      onClick={(e) => handleNavClick(e, link.href)}
+                      initial={{ opacity: 0, x: 16 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.04 + i * 0.035 }}
+                      className={`flex items-center justify-between px-4 py-3 text-[14px] font-medium rounded-lg transition-all duration-200 ${
+                        isActive
+                          ? "text-orange bg-orange/[0.06]"
+                          : "text-white/65 hover:text-white hover:bg-white/[0.04]"
+                      }`}
+                    >
+                      {link.name}
+                      <ArrowUpRight className={`w-3.5 h-3.5 ${isActive ? "text-orange/40" : "text-white/15"}`} />
+                    </motion.a>
+                  );
+                })}
               </nav>
               <div className="absolute bottom-0 left-0 right-0 px-5 pb-6 pt-5 bg-gradient-to-t from-navy via-navy to-transparent">
                 <a href="tel:+919876543210" className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white/[0.04] border border-white/[0.07] text-white/55 text-[12px] font-medium mb-2.5 hover:bg-white/[0.07] transition-all">
